@@ -12,6 +12,7 @@ Flask-RESTful = "*"
 Flask-JWT = "*"
 Flask-SQLAlchemy = "*"
 uWSGI = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.7"
