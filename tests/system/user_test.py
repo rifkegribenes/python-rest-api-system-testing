@@ -11,17 +11,19 @@ class UserTest(BaseTest):
 
                 self.assertEqual(r.status_code, 201)
                 self.assertIsNotNone(UserModel.find_by_username('test'))
-                self.assertDictEqual({'message': 'User created successfully.'}, json.loads(r.data))
+                self.assertDictEqual(d1={'message': 'User created successfully.'},
+                                     d2=json.loads(r.data))
 
     def test_register_and_login(self):
         with self.app() as c:
             with self.app_context():
                 c.post('/register', data={'username': 'test', 'password': '1234'})
-                auth_response = c.post('/auth',
-                                      data=json.dumps({'username': 'test', 'password': '1234'}),
-                                      headers={'Content-Type': 'application/json'})
+                auth_request = c.post('/auth', data=json.dumps({
+                    'username': 'test',
+                    'password': '1234'
+                }), headers={'Content-Type': 'application/json'})
 
-                self.assertIn('access_token', json.loads(auth_response.data.keys()))
+                self.assertIn('access_token', json.loads(auth_request.data).keys())
 
     def test_register_duplicate_user(self):
         with self.app() as c:
@@ -30,5 +32,5 @@ class UserTest(BaseTest):
                 r = c.post('/register', data={'username': 'test', 'password': '1234'})
 
                 self.assertEqual(r.status_code, 400)
-                self.assertDictEqual({'message': "A user with username username already exists."}, json.loads(r.data))
-
+                self.assertDictEqual(d1={'message': 'A user with that username already exists'},
+                                     d2=json.loads(r.data))
